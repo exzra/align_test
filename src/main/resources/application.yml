@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/align_test
+    username: postgres
+    password:
+    tomcat:
+      max-active: 49
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
