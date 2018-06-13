@@ -1,0 +1,11 @@
+insert into product(id, name, brand, price, quantity) values(1, 'prod1', 'brand1', 333, 12);
+insert into product(id, name, brand, price, quantity) values(2, 'prod2', 'brand1', 301, 2);
+insert into product(id, name, brand, price, quantity) values(3, 'prod3', 'brand1', 433, 4);
+insert into product(id, name, brand, price, quantity) values(4, 'prod4', 'brand1', 100, 100);
+insert into product(id, name, brand, price, quantity) values(5, 'prod5', 'brand1', 111, 111);
+insert into product(id, name, brand, price, quantity) values(11, 'prod1', 'brand', 399, 3);
+insert into product(id, name, brand, price, quantity) values(12, 'prod2', 'brand2', 301, 3);
+insert into product(id, name, brand, price, quantity) values(13, 'prod3', 'brand2', 433, 14);
+insert into product(id, name, brand, price, quantity) values(14, 'prod4', 'brand2', 100, 100);
+insert into product(id, name, brand, price, quantity) values(15, 'prod5', 'brand2', 111, 1);
+commit ;
