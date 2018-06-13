@@ -3,8 +3,12 @@ package com.tabak.test.task2.aligntest.processor;
 import com.tabak.test.task2.aligntest.model.Product;
 import com.tabak.test.task2.aligntest.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +27,7 @@ public class RestProcessor {
         repository.save(product);
     }
 
-    @RequestMapping(value = "rest/api/find", method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/api/find", method = RequestMethod.GET)
     public List<Product> findProduct(@RequestParam(required = false) String name, @RequestParam(required = false) String brand) {
 
         if (name != null) {
@@ -41,12 +45,12 @@ public class RestProcessor {
         }
     }
 
-    @RequestMapping(value = "rest/api/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/rest/api/delete", method = RequestMethod.DELETE)
     public void deleteProduct(@RequestParam Long id) {
         repository.deleteById(id);
     }
 
-    @RequestMapping(value = "rest/api/update", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/api/update", method = RequestMethod.PUT)
     public void updateProduct(@RequestBody Product product) {
         if (product.getId() != null) {
             repository.save(product);
@@ -55,7 +59,7 @@ public class RestProcessor {
         }
     }
 
-    @RequestMapping(value = "rest/api/leftovers", method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/api/leftovers", method = RequestMethod.GET)
     public List<Product> getLeftovers() {
         return repository.findAllByQuantityIsLessThan(5L);
     }
@@ -64,5 +68,15 @@ public class RestProcessor {
     public HttpServletResponse handleException(HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return response;
+    }
+
+
+    @RequestMapping(value="/rest/api/logout", method = RequestMethod.POST)
+    public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/login";
     }
 }
