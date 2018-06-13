@@ -28,6 +28,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().httpBasic().authenticationEntryPoint(authEntryPoint).and();
     }
 
+    /**
+     * здесь конечно можно было бы вынести пользователей в конфиг, дабы было красивее
+     * @param auth
+     * @throws Exception
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().passwordEncoder(NoOpPasswordEncoder.getInstance()).

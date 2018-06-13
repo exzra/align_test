@@ -23,8 +23,8 @@ public class RestProcessor {
     }
 
     @RequestMapping(value = "/rest/api/add", method = RequestMethod.POST)
-    public void addProduct(@RequestBody Product product) {
-        repository.save(product);
+    public Product addProduct(@RequestBody Product product) {
+        return repository.save(product);
     }
 
     @RequestMapping(value = "/rest/api/find", method = RequestMethod.GET)
@@ -51,11 +51,11 @@ public class RestProcessor {
     }
 
     @RequestMapping(value = "/rest/api/update", method = RequestMethod.PUT)
-    public void updateProduct(@RequestBody Product product) {
+    public Product updateProduct(@RequestBody Product product) {
         if (product.getId() != null) {
-            repository.save(product);
+            return repository.save(product);
         } else {
-            return;
+            return null;
         }
     }
 

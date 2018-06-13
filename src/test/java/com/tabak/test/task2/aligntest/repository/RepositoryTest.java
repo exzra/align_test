@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,9 +106,9 @@ public class RepositoryTest {
         repository.save(product);
     }
 
-    // короч чет он его не нашел, времени нет разбираться, сделал setUp @Sql(scripts = "insert.sql")
+    //@Sql(scripts = "insert.sql")
     @Test
-    public void testDAO() {
+    public void testFindByName() {
 
         Product product = new Product();
         product.setId(11L);
@@ -122,23 +123,70 @@ public class RepositoryTest {
         assertEquals(name1.get(0).getId(), product.getId());
         assertEquals(name1.get(0).getBrand(), product.getBrand());
 
-        List<Product> brand2 = repository.findByBrand("brand2");
-        assertEquals(brand2.size(), 4);
-
-        List<Product> byNameAndBrand = repository.findByNameAndBrand("prod1", "brand1");
-        assertEquals(byNameAndBrand.size(), 1);
-
-        product.setQuantity(111L);
-        repository.save(product);
-        Optional<Product> byId = repository.findById(11L);
-        assertEquals(byId.get().getQuantity(), product.getQuantity());
-
-        List<Product> allByQuantityIsLessThan = repository.findAllByQuantityIsLessThan(5L);
-        assertEquals(allByQuantityIsLessThan.size(), 5);
-
         repository.deleteById(11L);
         Optional<Product> byId1 = repository.findById(11L);
         assertFalse(byId1.isPresent());
+
+    }
+
+    @Test
+    public void testFindByBrand() {
+        List<Product> brand2 = repository.findByBrand("brand2");
+        assertEquals(brand2.size(), 4);
+    }
+
+    @Test
+    public void testFindByNameAndBrand() {
+        List<Product> byNameAndBrand = repository.findByNameAndBrand("prod1", "brand1");
+        assertEquals(byNameAndBrand.size(), 1);
+    }
+
+    @Test
+    public void testUpdate() {
+        Product product = new Product();
+        product.setId(12L);
+        product.setBrand("brand3");
+        product.setName("name1");
+        product.setPrice(11L);
+        product.setQuantity(10000L);
+        repository.save(product);
+
+        product.setQuantity(111L);
+        repository.save(product);
+        Optional<Product> byId = repository.findById(12L);
+        assertEquals(byId.get().getQuantity(), product.getQuantity());
+
+        repository.deleteById(12L);
+        Optional<Product> byId1 = repository.findById(12L);
+        assertFalse(byId1.isPresent());
+    }
+
+    /**
+     * смотрим, что в вернувшихся значениях точно те значения (quantity < 5).  А также проверяем,
+     * сколько объектов не попало в ресалт сет ( находим quantity >= 5, сверяем количественно)
+     *
+     */
+    @Test
+    public void testQuantity() {
+        List<Product> allByQuantityIsLessThan = repository.findAllByQuantityIsLessThan(5L);
+        Iterable<Product> products = repository.findAll();
+
+        int countGreater = 0;
+        int count = 0;
+
+        for (Iterator<Product> iterator = products.iterator() ; iterator.hasNext(); ) {
+            Product el = iterator.next();
+            count++;
+            if (el.getQuantity() >= 5) {
+                countGreater++;
+            }
+        }
+
+        assertEquals(count, countGreater + allByQuantityIsLessThan.size());
+
+        for (Product anAllByQuantityIsLessThan : allByQuantityIsLessThan) {
+            assertFalse(anAllByQuantityIsLessThan.getQuantity() >= 5);
+        }
 
     }
 }
